@@ -3924,7 +3924,6 @@ function AES.Encrypt(Key: buffer, IV: buffer, Plaintext: buffer, AAD: buffer?): 
 	local AuthData = AAD or buffer.create(0)
 
 	local OutputBuffer = buffer.create(PlainLen)
-	local OutputTag = buffer.create(16)
 
 	local H = buffer.create(16)
 	local J0 = buffer.create(16)
@@ -3934,12 +3933,11 @@ function AES.Encrypt(Key: buffer, IV: buffer, Plaintext: buffer, AAD: buffer?): 
 	PrepareJ0(IV, IVLen, H, J0)
 	GcmGctr(EncryptionProcessor, J0, Plaintext, PlainLen, OutputBuffer)
 	GcmHash(H, AuthData, AADLen, OutputBuffer, PlainLen, S)
-	Gctr(EncryptionProcessor, J0, S, 16, OutputTag)
 
-	return OutputBuffer, OutputTag
+	return OutputBuffer
 end
 
-function AES.Decrypt(Key: buffer, IV: buffer, Ciphertext: buffer, Tag: buffer, AAD: buffer?): (boolean, buffer?)
+function AES.Decrypt(Key: buffer, IV: buffer, Ciphertext: buffer, AAD: buffer?): (boolean, buffer?)
 	if not Key or typeof(Key) ~= "buffer" then
 		error("Key must be a buffer", 2)
 	end
@@ -3948,9 +3946,6 @@ function AES.Decrypt(Key: buffer, IV: buffer, Ciphertext: buffer, Tag: buffer, A
 	end
 	if not Ciphertext or typeof(Ciphertext) ~= "buffer" then
 		error("Ciphertext must be a buffer", 2)
-	end
-	if not Tag or typeof(Tag) ~= "buffer" then
-		error("Tag must be a buffer", 2)
 	end
 
 	local KeyLength = buffer.len(Key)
@@ -3968,7 +3963,6 @@ function AES.Decrypt(Key: buffer, IV: buffer, Ciphertext: buffer, Tag: buffer, A
 	local IVLen = buffer.len(IV)
 	local AADLen = buffer.len(AAD or buffer.create(0))
 	local CryptLen = buffer.len(Ciphertext)
-	local TagLength = buffer.len(Tag)
 	local AuthData = AAD or buffer.create(0)
 
 	local OutputBuffer = buffer.create(CryptLen)
@@ -3976,17 +3970,11 @@ function AES.Decrypt(Key: buffer, IV: buffer, Ciphertext: buffer, Tag: buffer, A
 	local H = buffer.create(16)
 	local J0 = buffer.create(16)
 	local S = buffer.create(16)
-	local ComputedTag = buffer.create(16)
 
 	EncryptionProcessor(H, 0, H, 0)
 	PrepareJ0(IV, IVLen, H, J0)
 	GcmGctr(EncryptionProcessor, J0, Ciphertext, CryptLen, OutputBuffer)
 	GcmHash(H, AuthData, AADLen, Ciphertext, CryptLen, S)
-	Gctr(EncryptionProcessor, J0, S, 16, ComputedTag)
-
-	if not ConstantTimeCompare(Tag, ComputedTag) then
-		return false
-	end
 
 	return true, OutputBuffer
 end
