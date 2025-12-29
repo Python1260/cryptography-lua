@@ -3987,9 +3987,9 @@ local cryptography = {
 		["sha512"] = SHA512,
 		["md5"] = MD5,
 		["sha256"] = SHA256,
-		["sha3_224"] = SHA3_224,
-		["sha3_256"] = SHA3_256,
-		["sha3_512"] = SHA3_512
+		["sha3-224"] = SHA3.SHA3_224,
+		["sha3-256"] = SHA3.SHA3_256,
+		["sha3-512"] = SHA3.SHA3_512
 	}
 }
 
