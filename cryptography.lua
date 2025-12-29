@@ -3980,15 +3980,17 @@ function AES.Decrypt(Key: buffer, IV: buffer, Ciphertext: buffer, AAD: buffer?):
 end
 
 local cryptography = {
-	"AES" = AES,
-    "sha1" = SHA1,
-    "sha384" = SHA384,
-    "sha512" = SHA512,
-    "md5" = MD5,
-    "sha256" = SHA256,
-    "sha3-224" = SHA3_224,
-    "sha3-256" = SHA3_256,
-    "sha3-512" = SHA3_512
+	AES = AES,
+	HASHES = {
+		"sha1" = SHA1,
+		"sha384" = SHA384,
+		"sha512" = SHA512,
+		"md5" = MD5,
+		"sha256" = SHA256,
+		"sha3-224" = SHA3_224,
+		"sha3-256" = SHA3_256,
+		"sha3-512" = SHA3_512
+	}
 }
 
 return cryptography
