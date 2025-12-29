@@ -3991,14 +3991,16 @@ function AES.Decrypt(Key: buffer, IV: buffer, Ciphertext: buffer, Tag: buffer, A
 	return true, OutputBuffer
 end
 
-return {
-    AES,
-    SHA1,
-    SHA384,
-    SHA512,
-    MD5,
-    SHA256,
-    SHA3_224,
-    SHA3_256,
-    SHA3_512
+local cryptography = {
+	AES = AES,
+    SHA1 = SHA1,
+    SHA384 = SHA384,
+    SHA512 = SHA512,
+    MD5 = MD5,
+    SHA256 = SHA256,
+    SHA3_224 = SHA3_224,
+    SHA3_256 = SHA3_256,
+    SHA3_512 = SHA3_512
 }
+
+return cryptography
